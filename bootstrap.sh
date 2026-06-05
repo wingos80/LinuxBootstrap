@@ -1,0 +1,65 @@
+#!/bin/bash
+set -e
+
+echo "Updating package index..."
+sudo apt update && sudo apt upgrade -y
+
+# --- Git ---
+echo "Installing git..."
+sudo apt install -y git
+
+# --- uv ---
+echo "Installing uv..."
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source $HOME/.local/bin/env
+echo "Installing uv tools..."
+uv tool install commitizen
+uv tool install ruff@latest
+
+# --- VSCode ---
+echo "Installing VSCode..."
+sudo apt install -y wget gpg
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /tmp/microsoft.gpg
+sudo install -D -o root -g root -m 644 /tmp/microsoft.gpg /etc/apt/keyrings/microsoft.gpg
+echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" \
+  | sudo tee /etc/apt/sources.list.d/vscode.list
+sudo apt update && sudo apt install -y code
+
+# --- Brave ---
+echo "Installing Brave..."
+sudo apt install -y curl
+sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
+  https://brave-keyring.s3.brave.com/signing-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] \
+  https://brave-browser-apt-release.s3.brave.com/ stable main" \
+  | sudo tee /etc/apt/sources.list.d/brave-browser.list
+sudo apt update && sudo apt install -y brave-browser
+
+# --- Spotify ---
+echo "Installing Spotify..."
+sudo snap install spotify
+
+# --- SSH key ---
+echo "Enter your email for the SSH key:"
+read ssh_email
+ssh-keygen -t ed25519 -C "$ssh_email" -f ~/.ssh/id_ed25519
+
+echo ""
+echo "Your public key:"
+cat ~/.ssh/id_ed25519.pub
+echo ""
+echo "Add the above key to GitHub at https://github.com/settings/ssh/new"
+echo "Press Enter when done..."
+read -r _
+
+# --- Dotfiles ---
+echo "Restoring dotfiles..."
+git clone --bare git@github.com:wingos80/LinuxBootstrap.git $HOME/.dotfiles
+function dotfiles() {
+  git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME "$@"
+}
+dotfiles checkout
+dotfiles config --local status.showUntrackedFiles no
+
+source ~/.bashrc
+echo "Done"
