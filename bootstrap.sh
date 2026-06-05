@@ -2,22 +2,26 @@
 set -e
 
 echo "Updating package index..."
-sudo apt update && sudo apt upgrade -y
+#sudo apt update && sudo apt upgrade -y
 
 # --- Git ---
 echo "Installing git..."
-sudo apt install -y git
+#sudo apt install -y git
 
 # --- uv ---
 echo "Installing uv..."
-curl -LsSf https://astral.sh/uv/install.sh | sh
-source $HOME/.local/bin/env
+#curl -LsSf https://astral.sh/uv/install.sh | sh
+#export PATH="$HOME/.local/bin:$PATH"
 echo "Installing uv tools..."
-uv tool install commitizen
-uv tool install ruff@latest
+#uv tool install commitizen
+#uv tool install ruff@latest
 
 # --- VSCode ---
 echo "Installing VSCode..."
+sudo rm -f /etc/apt/sources.list.d/vscode.list
+sudo rm -f /usr/share/keyrings/microsoft.gpg
+sudo rm -f /etc/apt/keyrings/microsoft.gpg
+sudo rm -f /etc/apt/sources.list.d/vscode.sources
 sudo apt install -y wget gpg
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /tmp/microsoft.gpg
 sudo install -D -o root -g root -m 644 /tmp/microsoft.gpg /etc/apt/keyrings/microsoft.gpg
