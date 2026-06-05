@@ -1,0 +1,53 @@
+{
+    "code-runner.runInTerminal": true,
+    "workbench.iconTheme": "vscode-icons",
+    "security.workspace.trust.untrustedFiles": "open",
+    "python.defaultInterpreterPath": "",
+    "editor.inlineSuggest.enabled": true,
+    "github.copilot.enable": {
+        "*": false,
+        "plaintext": true,
+        "markdown": false,
+        "scminput": false,
+        "quarto": false,
+        "yaml": false,
+        "python": false,
+        "cpp": false,
+        "cmake": false
+    },
+    "workbench.colorTheme": "Monokai Vibrant",
+    "quarto.mathjax.theme": "dark",
+    "notebook.lineNumbers": "on",
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "editor.detectIndentation": false,
+    "code-runner.ignoreSelection": true,
+    "vsicons.dontShowNewVersionMessage": true,
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.view.autoFocus.enabled": true,
+    "github.copilot.editor.enableAutoCompletions": true,
+    "notebook.stickyScroll.enabled": true,
+    "editor.stickyScroll.defaultModel": "indentationModel",
+    "git.autofetch": true,
+    "workbench.editor.wrapTabs": true,
+    "github.copilot.nextEditSuggestions.enabled": false,
+    "python.analysis.typeCheckingMode": "basic",
+    "claudeCode.preferredLocation": "panel",
+    "claudeCode.allowDangerouslySkipPermissions": true,
+    "chat.viewSessions.orientation": "stacked",
+    "[cpp]": {
+        "editor.wordBasedSuggestions": "off",
+        "editor.semanticHighlighting.enabled": true,
+        "editor.stickyScroll.defaultModel": "foldingProviderModel",
+        "editor.suggest.insertMode": "replace"
+    },
+    "C_Cpp.default.cppStandard": "c++20",
+    "cmake.configureOnOpen": false,
+    "cmake.showConfigureWithDebuggerNotification": false,
+    "cmake.configureOnEdit": false,
+    "gitlens.ai.model": "vscode",
+    "gitlens.ai.vscode.model": "copilot:gpt-4.1"
+    // "latex-workshop.latex.autoClean.run": "onBuilt",
+    // "latex-workshop.latex.clean.fileTypes": [ "./*.synctex.gz"]
+}
