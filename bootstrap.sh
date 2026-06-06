@@ -2,19 +2,22 @@
 set -e
 
 echo "Updating package index..."
-#sudo apt update && sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y
+
+echo "installing miscellaneous apts"
+sudo apt install wl-clipboard
 
 # --- Git ---
 echo "Installing git..."
-#sudo apt install -y git
+sudo apt install -y git
 
 # --- uv ---
 echo "Installing uv..."
-#curl -LsSf https://astral.sh/uv/install.sh | sh
-#export PATH="$HOME/.local/bin:$PATH"
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
 echo "Installing uv tools..."
-#uv tool install commitizen
-#uv tool install ruff@latest
+uv tool install commitizen
+uv tool install ruff@latest
 
 # --- VSCode ---
 echo "Installing VSCode..."
