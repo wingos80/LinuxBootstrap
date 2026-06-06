@@ -1,15 +1,13 @@
 #!/bin/bash
 set -e
 
+# --- System update ---
 echo "Updating package index..."
 sudo apt update && sudo apt upgrade -y
 
-echo "installing miscellaneous apts"
-sudo apt install wl-clipboard
-
-# --- Git ---
-echo "Installing git..."
-sudo apt install -y git
+# --- Core tools (needed by later steps) ---
+echo "Installing core tools..."
+sudo apt install -y git curl wget gpg wl-clipboard
 
 # --- uv ---
 echo "Installing uv..."
@@ -25,7 +23,6 @@ sudo rm -f /etc/apt/sources.list.d/vscode.list
 sudo rm -f /usr/share/keyrings/microsoft.gpg
 sudo rm -f /etc/apt/keyrings/microsoft.gpg
 sudo rm -f /etc/apt/sources.list.d/vscode.sources
-sudo apt install -y wget gpg
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /tmp/microsoft.gpg
 sudo install -D -o root -g root -m 644 /tmp/microsoft.gpg /etc/apt/keyrings/microsoft.gpg
 echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" \
@@ -34,7 +31,6 @@ sudo apt update && sudo apt install -y code
 
 # --- Brave ---
 echo "Installing Brave..."
-sudo apt install -y curl
 sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
   https://brave-keyring.s3.brave.com/signing-key.gpg
 echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] \
@@ -44,29 +40,53 @@ sudo apt update && sudo apt install -y brave-browser
 
 # --- Spotify ---
 echo "Installing Spotify..."
-sudo snap install spotify
+if command -v snap &> /dev/null; then
+  sudo snap install spotify
+else
+  echo "WARNING: snap not available, skipping Spotify"
+fi
 
 # --- SSH key ---
-echo "Enter your email for the SSH key:"
-read ssh_email
-ssh-keygen -t ed25519 -C "$ssh_email" -f ~/.ssh/id_ed25519
+mkdir -p ~/.ssh
+if [ -f ~/.ssh/id_ed25519 ]; then
+  echo "SSH key already exists at ~/.ssh/id_ed25519, skipping generation"
+else
+  echo "Enter your email for the SSH key:"
+  read ssh_email
+  ssh-keygen -t ed25519 -C "$ssh_email" -f ~/.ssh/id_ed25519
 
-echo ""
-echo "Your public key:"
-cat ~/.ssh/id_ed25519.pub
-echo ""
-echo "Add the above key to GitHub at https://github.com/settings/ssh/new"
-echo "Press Enter when done..."
-read -r _
+  echo ""
+  echo "Your public key:"
+  cat ~/.ssh/id_ed25519.pub
+  echo ""
+  echo "Add the above key to GitHub at https://github.com/settings/ssh/new"
+  echo "Press Enter when done..."
+  read -r _
+fi
 
 # --- Dotfiles ---
 echo "Restoring dotfiles..."
-git clone --bare git@github.com:wingos80/LinuxBootstrap.git $HOME/.dotfiles
+if [ -d "$HOME/.dotfiles" ]; then
+  echo "Dotfiles repo already exists, skipping clone"
+else
+  git clone --bare git@github.com:wingos80/LinuxBootstrap.git "$HOME/.dotfiles"
+fi
+
 function dotfiles() {
-  git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME "$@"
+  git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"
 }
-dotfiles checkout
+
+# Back up conflicting files before checkout
+if ! dotfiles checkout 2>/dev/null; then
+  echo "Backing up conflicting dotfiles..."
+  mkdir -p "$HOME/.dotfiles-backup"
+  dotfiles checkout 2>&1 | grep -E "^\s+" | awk '{print $1}' | while read -r file; do
+    mkdir -p "$HOME/.dotfiles-backup/$(dirname "$file")"
+    mv "$HOME/$file" "$HOME/.dotfiles-backup/$file"
+  done
+  dotfiles checkout
+fi
+
 dotfiles config --local status.showUntrackedFiles no
 
-source ~/.bashrc
-echo "Done"
+echo "Done. Open a new terminal to pick up any shell config changes."
