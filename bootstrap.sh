@@ -17,6 +17,28 @@ else
   echo "WARNING: snap not available, skipping Proton Pass"
 fi
 
+# --- SSH server + Tailscale ---
+echo "Installing SSH server..."
+sudo apt install -y openssh-server
+sudo systemctl enable --now ssh
+ 
+echo "Installing Tailscale..."
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up
+echo "Authenticate Tailscale in the browser, then press Enter to continue..."
+read -r _
+
+# SSH client config (keepalive to prevent dropped connections)
+mkdir -p ~/.ssh
+if ! grep -q "ServerAliveInterval" ~/.ssh/config 2>/dev/null; then
+  cat >> ~/.ssh/config << 'SSHCONF'
+Host *
+  ServerAliveInterval 30
+  ServerAliveCountMax 5
+SSHCONF
+  chmod 600 ~/.ssh/config
+fi
+
 # --- uv ---
 echo "Installing uv..."
 curl -LsSf https://astral.sh/uv/install.sh | sh
