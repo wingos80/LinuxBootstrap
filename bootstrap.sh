@@ -9,6 +9,14 @@ sudo apt update && sudo apt upgrade -y
 echo "Installing core tools..."
 sudo apt install -y git curl wget gpg wl-clipboard
 
+# --- Proton Pass ---
+echo "Installing Proton Pass..."
+if command -v snap &> /dev/null; then
+  sudo snap install proton-pass
+else
+  echo "WARNING: snap not available, skipping Proton Pass"
+fi
+
 # --- uv ---
 echo "Installing uv..."
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -32,7 +40,7 @@ sudo apt update && sudo apt install -y code
 # --- Brave ---
 echo "Installing Brave..."
 sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
-  https://brave-keyring.s3.brave.com/signing-key.gpg
+  https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] \
   https://brave-browser-apt-release.s3.brave.com/ stable main" \
   | sudo tee /etc/apt/sources.list.d/brave-browser.list
