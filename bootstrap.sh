@@ -8,6 +8,8 @@ sudo apt update && sudo apt upgrade -y
 # --- Core tools (needed by later steps) ---
 echo "Installing core tools..."
 sudo apt install -y git curl wget gpg wl-clipboard
+sudo apt install tmux
+sudo snap install docker
 
 # --- Proton Pass ---
 echo "Installing Proton Pass..."

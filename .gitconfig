@@ -1,3 +1,17 @@
+
 [user]
 	email = wingyc80@gmail.com
 	name = wingos80
+[commit]
+	gpgsign = true
+[tag]
+	gpgSign = true
+[pull]
+	rebase = true
+[merge]
+	ff = only
+[core]
+	autocrlf = true
+	editor = code --wait
+[credential]
+	helper = store
