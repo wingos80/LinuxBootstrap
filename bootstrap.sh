@@ -2,17 +2,41 @@
 set -e
 
 # --- System update ---
-echo "Updating package index..."
+echo "
+
+Updating package index...
+
+"
+# Include synaptics repo for DisplayLink drivers
+wget -P ./Downloads https://www.synaptics.com/sites/default/files/Ubuntu/pool/stable/main/all/synaptics-repository-keyring.deb -d ./Downloads
+sudo apt install ./Downloads/synaptics-repository-keyring.deb
 sudo apt update && sudo apt upgrade -y
 
+# --- DisplayLink drivers ---
+echo "
+
+Installing DisplayLink drivers
+
+"
+sudo apt install displaylink-driver
+
 # --- Core tools (needed by later steps) ---
-echo "Installing core tools..."
+echo "
+
+Installing core tools...
+
+"
 sudo apt install -y git curl wget gpg wl-clipboard
 sudo apt install tmux
 sudo snap install docker
 
+
 # --- Proton Pass ---
-echo "Installing Proton Pass..."
+echo "
+
+Installing Proton Pass...
+
+"
 if command -v snap &> /dev/null; then
   sudo snap install proton-pass
 else
@@ -20,11 +44,19 @@ else
 fi
 
 # --- SSH server + Tailscale ---
-echo "Installing SSH server..."
+echo "
+
+Installing SSH server...
+
+"
 sudo apt install -y openssh-server
 sudo systemctl enable --now ssh
  
-echo "Installing Tailscale..."
+echo "
+
+Installing Tailscale...
+
+"
 curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up
 echo "Authenticate Tailscale in the browser, then press Enter to continue..."
@@ -42,7 +74,11 @@ SSHCONF
 fi
 
 # --- uv ---
-echo "Installing uv..."
+echo "
+
+Installing uv...
+
+"
 curl -LsSf https://astral.sh/uv/install.sh | sh
 export PATH="$HOME/.local/bin:$PATH"
 echo "Installing uv tools..."
@@ -50,7 +86,11 @@ uv tool install commitizen
 uv tool install ruff@latest
 
 # --- VSCode ---
-echo "Installing VSCode..."
+echo "
+
+Installing VSCode...
+
+"
 sudo rm -f /etc/apt/sources.list.d/vscode.list
 sudo rm -f /usr/share/keyrings/microsoft.gpg
 sudo rm -f /etc/apt/keyrings/microsoft.gpg
@@ -62,7 +102,11 @@ echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://package
 sudo apt update && sudo apt install -y code
 
 # --- Brave ---
-echo "Installing Brave..."
+echo "
+
+Installing Brave...
+
+"
 sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
   https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] \
@@ -71,7 +115,11 @@ echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=
 sudo apt update && sudo apt install -y brave-browser
 
 # --- Spotify ---
-echo "Installing Spotify..."
+echo "
+
+Installing Spotify...
+
+"
 if command -v snap &> /dev/null; then
   sudo snap install spotify
 else
@@ -79,6 +127,11 @@ else
 fi
 
 # --- SSH key ---
+echo "
+
+Setting up ssh keys
+
+"
 mkdir -p ~/.ssh
 if [ -f ~/.ssh/id_ed25519 ]; then
   echo "SSH key already exists at ~/.ssh/id_ed25519, skipping generation"
@@ -97,7 +150,11 @@ else
 fi
 
 # --- Dotfiles ---
-echo "Restoring dotfiles..."
+echo "
+
+Restoring dotfiles...
+
+"
 if [ -d "$HOME/.dotfiles" ]; then
   echo "Dotfiles repo already exists, skipping clone"
 else
@@ -121,4 +178,10 @@ fi
 
 dotfiles config --local status.showUntrackedFiles no
 
-echo "Done. Open a new terminal to pick up any shell config changes."
+echo "
+
+--------------------------------------------------------------
+Done. Open a new terminal to pick up any shell config changes.
+--------------------------------------------------------------
+
+"
