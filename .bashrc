@@ -116,8 +116,13 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# <---- User commands ---->
+
+# define the dotfiles command for tracking configs
 alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
+# load uv environment and PATH setup
 . "$HOME/.local/bin/env"
 
+# tell GPG which terminal to use for when git calls GPG
 export GPG_TTY=$(tty)
