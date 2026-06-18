@@ -62,6 +62,7 @@ curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up
 echo "Authenticate Tailscale in the browser, then press Enter to continue..."
 read -r _
+sudo systemctl enable tailscaled
 
 # SSH client config (keepalive to prevent dropped connections)
 mkdir -p ~/.ssh
