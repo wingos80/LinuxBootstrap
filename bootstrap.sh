@@ -26,6 +26,7 @@ echo "
 Installing core tools...
 
 "
+sudo apt install build-essential
 sudo apt install -y git curl wget gpg wl-clipboard
 sudo apt install tmux
 sudo snap install docker
