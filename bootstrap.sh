@@ -180,6 +180,28 @@ fi
 
 dotfiles config --local status.showUntrackedFiles no
 
+# --- Reset GNOME monitor layout ---
+# Hybrid GPU (NVIDIA + AMD) + DisplayLink/EVDI cause DRM connectors to be
+# renamed across boots (eDP-1<->eDP-2, DVI-I-1/2/3, DP-1 for the same panels).
+# GNOME matches ~/.config/monitors.xml entries by connector name, so when a
+# monitor lands on a different connector the saved config no longer matches and
+# the layout is "forgotten". Stale/conflicting entries make this worse, so back
+# up the existing file and let GNOME write a fresh one. Re-set your layout in
+# Settings > Displays once after this runs; that single clean config will then
+# match on subsequent boots.
+echo "
+
+Resetting GNOME monitor layout...
+
+"
+if [ -f "$HOME/.config/monitors.xml" ]; then
+  mv "$HOME/.config/monitors.xml" \
+     "$HOME/.config/monitors.xml.bak-$(date +%Y%m%d%H%M%S)"
+  echo "Backed up old monitors.xml. Re-set your displays in Settings > Displays."
+else
+  echo "No monitors.xml to reset, skipping."
+fi
+
 echo "
 
 --------------------------------------------------------------
